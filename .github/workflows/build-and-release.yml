@@ -42,7 +42,9 @@ jobs:
         id: version-check
         run: |
           TAG_VERSION="${GITHUB_REF#refs/tags/v}"
-          CS_VERSION=$(grep -oPm1 "(?<=\"BetterJoiner\", \")[^\"]*" Core/Loader.cs)
+          CS_VERSION=$(grep -oP '\[assembly: MelonInfo\(typeof\(Loader\), "BetterJoiner", "\K[^"]+' Core/Loader.cs)
+          echo "Tag version: $TAG_VERSION"
+          echo "Loader.cs version: $CS_VERSION"
           if [ "$TAG_VERSION" != "$CS_VERSION" ]; then
             echo "Version mismatch: Tag version is $TAG_VERSION, but Loader.cs version is $CS_VERSION"
             exit 1
