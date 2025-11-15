@@ -58,7 +58,7 @@ namespace BetterJoiner.Core
             try
             {
                 configManager.SetBool("enhancedSaveUI", enhancedSaveUI);
-                configManager.SaveMainConfig();
+                MelonPreferences.Save();
             }
             catch (Exception ex)
             {
