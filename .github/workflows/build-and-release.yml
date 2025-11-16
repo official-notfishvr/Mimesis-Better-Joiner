@@ -3,7 +3,7 @@ name: Build and Release on Tag
 on:
   push:
     tags:
-      - "v*"
+      - "*.*"
 
 permissions:
   contents: write
@@ -125,7 +125,7 @@ jobs:
         with:
           token: ${{ secrets.THUNDERSTORE_TOKEN }}
           community: mimesis
-          namespace: DooDesch
+          namespace: FishModsVRVR
           name: BetterJoiner
           description: Better mod for joining in Mimesis.
           version: ${{ needs.build.outputs.version }}
