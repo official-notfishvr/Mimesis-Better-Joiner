@@ -59,4 +59,4 @@ A mod for Mimesis that enhances the save system, room browsing, and provides an 
 - Close UI - ESC key (standard)
 
 ## Contributing
-If you want features to be added, go to https://github.com/official-notfishvr/Mimesis-Better-Joiner/issues and create a new issue telling us what you want.
+If you want features to be added, go to https://github.com/official-notfishvr/Mimesis-Better-Joiner/issues and create a new issue telling us what you want. 
