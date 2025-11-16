@@ -53,7 +53,7 @@ jobs:
 
       - name: Build the project
         run: >
-          dotnet build "Better Joiner.csproj" --configuration Release
+          dotnet build "BetterJoiner.csproj" --configuration Release
           /p:WorkspaceLibPath="${{ github.workspace }}/Workspace/lib"
           /p:GameManagedPath="${{ github.workspace }}/Workspace/lib/game"
           /p:GameAssemblyPath="${{ github.workspace }}/Workspace/lib/game"
