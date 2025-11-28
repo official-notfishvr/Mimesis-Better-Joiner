@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MelonLoader;
@@ -7,6 +7,8 @@ using Steamworks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using BetterJoiner.Core.Config;
+using UnityEngine.EventSystems;
 
 namespace BetterJoiner.Core.Features
 {
@@ -21,6 +23,7 @@ namespace BetterJoiner.Core.Features
         private UIPrefab_NewTram newTramUI;
         private bool isSaveMode = false;
         private MainMenu mainMenuInstance;
+        public ConfigManager Config { get; set; }
 
         private GameObject mainPanel;
         private Transform savesContentTransform;
@@ -168,7 +171,7 @@ namespace BetterJoiner.Core.Features
                 panelRect.offsetMax = Vector2.zero;
 
                 Image panelImage = mainPanel.AddComponent<Image>();
-                panelImage.color = new Color(0.1f, 0.1f, 0.15f, 0.98f);
+                panelImage.color = GetColorFromConfig("UI_BackgroundColor", new Color(0.1f, 0.1f, 0.15f, 0.98f));
 
                 CanvasGroup canvasGroup = mainPanel.AddComponent<CanvasGroup>();
                 canvasGroup.alpha = 1f;
@@ -187,7 +190,11 @@ namespace BetterJoiner.Core.Features
                 containerRect.sizeDelta = new Vector2(800, 750);
 
                 Image containerImage = containerObj.AddComponent<Image>();
-                containerImage.color = new Color(0.1f, 0.1f, 0.15f, 0.98f);
+                containerImage.color = GetColorFromConfig("UI_ContainerColor", new Color(0.1f, 0.1f, 0.15f, 0.98f));
+
+                Outline containerOutline = containerObj.AddComponent<Outline>();
+                containerOutline.effectColor = new Color(1, 1, 1, 0.1f);
+                containerOutline.effectDistance = new Vector2(1, -1);
 
                 GameObject titleObj = new GameObject("Title");
                 titleObj.transform.SetParent(containerObj.transform, false);
@@ -203,7 +210,11 @@ namespace BetterJoiner.Core.Features
                 titleText.fontSize = 48;
                 titleText.fontStyle = FontStyles.Bold;
                 titleText.alignment = TextAlignmentOptions.Center;
-                titleText.color = Color.white;
+                titleText.color = GetColorFromConfig("UI_TextColor", Color.white);
+
+                Shadow titleShadow = titleObj.AddComponent<Shadow>();
+                titleShadow.effectColor = new Color(0, 0, 0, 0.5f);
+                titleShadow.effectDistance = new Vector2(2, -2);
 
                 GameObject tabObj = new GameObject("TabButtons");
                 tabObj.transform.SetParent(containerObj.transform, false);
@@ -215,7 +226,7 @@ namespace BetterJoiner.Core.Features
                 tabRect.sizeDelta = new Vector2(760, 50);
 
                 Image tabImage = tabObj.AddComponent<Image>();
-                tabImage.color = new Color(0.1f, 0.1f, 0.15f, 0.99f);
+                tabImage.color = GetColorFromConfig("UI_TabBackgroundColor", new Color(0.1f, 0.1f, 0.15f, 0.99f));
 
                 GraphicRaycaster tabRaycaster = tabObj.AddComponent<GraphicRaycaster>();
 
@@ -238,7 +249,7 @@ namespace BetterJoiner.Core.Features
                 statusRect.sizeDelta = new Vector2(760, 35);
 
                 Image statusImage = statusObj.AddComponent<Image>();
-                statusImage.color = new Color(0.15f, 0.15f, 0.2f, 1);
+                statusImage.color = GetColorFromConfig("UI_StatusBarColor", new Color(0.15f, 0.15f, 0.2f, 1));
 
                 GameObject statusTextObj = new GameObject("Text");
                 statusTextObj.transform.SetParent(statusObj.transform, false);
@@ -252,7 +263,7 @@ namespace BetterJoiner.Core.Features
                 statusText.text = "Ready";
                 statusText.fontSize = 18;
                 statusText.alignment = TextAlignmentOptions.Center;
-                statusText.color = new Color(0.8f, 0.8f, 0.85f, 1);
+                statusText.color = GetColorFromConfig("UI_SubTextColor", new Color(0.8f, 0.8f, 0.85f, 1));
                 statusText.raycastTarget = false;
 
                 GameObject contentContainerObj = new GameObject("ContentContainer");
@@ -278,7 +289,7 @@ namespace BetterJoiner.Core.Features
 
                 savesScrollRect = savesContainer.AddComponent<ScrollRect>();
                 Image savesImage = savesContainer.AddComponent<Image>();
-                savesImage.color = new Color(0.08f, 0.08f, 0.12f, 0.9f);
+                savesImage.color = GetColorFromConfig("UI_ListBackgroundColor", new Color(0.08f, 0.08f, 0.12f, 0.9f));
 
                 GameObject savesViewportObj = new GameObject("Viewport");
                 savesViewportObj.transform.SetParent(savesContainer.transform, false);
@@ -289,7 +300,7 @@ namespace BetterJoiner.Core.Features
                 savesViewportRect.offsetMax = Vector2.zero;
 
                 Image savesViewportImage = savesViewportObj.AddComponent<Image>();
-                savesViewportImage.color = new Color(0.08f, 0.08f, 0.12f, 1);
+                savesViewportImage.color = GetColorFromConfig("UI_ListBackgroundColor", new Color(0.08f, 0.08f, 0.12f, 1));
 
                 Mask savesMask = savesViewportObj.AddComponent<Mask>();
                 savesMask.showMaskGraphic = false;
@@ -327,11 +338,12 @@ namespace BetterJoiner.Core.Features
                 roomsRect.anchorMax = Vector2.one;
                 roomsRect.offsetMin = Vector2.zero;
                 roomsRect.offsetMax = Vector2.zero;
+                roomsRect.offsetMax = Vector2.zero;
                 roomsContainer.SetActive(false);
 
                 roomsScrollRect = roomsContainer.AddComponent<ScrollRect>();
                 Image roomsImage = roomsContainer.AddComponent<Image>();
-                roomsImage.color = new Color(0.08f, 0.08f, 0.12f, 0.9f);
+                roomsImage.color = GetColorFromConfig("UI_ListBackgroundColor", new Color(0.08f, 0.08f, 0.12f, 0.9f));
 
                 GameObject roomsViewportObj = new GameObject("Viewport");
                 roomsViewportObj.transform.SetParent(roomsContainer.transform, false);
@@ -342,7 +354,7 @@ namespace BetterJoiner.Core.Features
                 roomsViewportRect.offsetMax = Vector2.zero;
 
                 Image roomsViewportImage = roomsViewportObj.AddComponent<Image>();
-                roomsViewportImage.color = new Color(0.08f, 0.08f, 0.12f, 1);
+                roomsViewportImage.color = GetColorFromConfig("UI_ListBackgroundColor", new Color(0.08f, 0.08f, 0.12f, 1));
 
                 Mask roomsMask = roomsViewportObj.AddComponent<Mask>();
                 roomsMask.showMaskGraphic = false;
@@ -402,7 +414,7 @@ namespace BetterJoiner.Core.Features
                 pageText.alignment = TextAlignmentOptions.Center;
                 pageText.fontSize = 26;
                 pageText.fontStyle = FontStyles.Bold;
-                pageText.color = Color.white;
+                pageText.color = GetColorFromConfig("UI_TextColor", Color.white);
 
                 Button nextBtn = CreateButton(navObj, "Next", ButtonType.Secondary);
                 nextBtn.onClick.AddListener(() => NextPage());
@@ -430,7 +442,7 @@ namespace BetterJoiner.Core.Features
 
             Button btn = btnObj.AddComponent<Button>();
             Image btnImage = btnObj.AddComponent<Image>();
-            btnImage.color = new Color(0.25f, 0.25f, 0.3f, 1);
+            btnImage.color = GetColorFromConfig("UI_TabButtonColor", new Color(0.25f, 0.25f, 0.3f, 1));
 
             GameObject textObj = new GameObject("Text");
             textObj.transform.SetParent(btnObj.transform, false);
@@ -445,7 +457,7 @@ namespace BetterJoiner.Core.Features
             btnText.fontSize = 20;
             btnText.fontStyle = FontStyles.Bold;
             btnText.alignment = TextAlignmentOptions.Center;
-            btnText.color = Color.white;
+            btnText.color = GetColorFromConfig("UI_TextColor", Color.white);
             btnText.raycastTarget = false;
 
             btn.onClick.AddListener(() => SwitchTab(tabIndex));
@@ -455,6 +467,7 @@ namespace BetterJoiner.Core.Features
             colors.normalColor = btnImage.color;
             colors.highlightedColor = btnImage.color * 1.2f;
             btn.colors = colors;
+            btnObj.AddComponent<ButtonHoverAnimation>();
         }
 
         private void SwitchTab(int tab)
@@ -478,7 +491,7 @@ namespace BetterJoiner.Core.Features
                         titleText.text = isSaveMode ? "LOAD GAME" : "CREATE NEW GAME";
                     LoadAllSaves();
                 }
-                else
+                else if (tab == 1)
                 {
                     savesContainer.SetActive(false);
                     roomsContainer.SetActive(true);
@@ -509,16 +522,20 @@ namespace BetterJoiner.Core.Features
             Image btnImage = btnObj.AddComponent<Image>();
             btnImage.raycastTarget = true;
 
+            Outline btnOutline = btnObj.AddComponent<Outline>();
+            btnOutline.effectColor = new Color(1, 1, 1, 0.1f);
+            btnOutline.effectDistance = new Vector2(1, -1);
+
             switch (type)
             {
                 case ButtonType.Primary:
-                    btnImage.color = new Color(0.2f, 0.5f, 0.8f, 1);
+                    btnImage.color = GetColorFromConfig("UI_PrimaryColor", new Color(0.2f, 0.5f, 0.8f, 1));
                     break;
                 case ButtonType.Secondary:
-                    btnImage.color = new Color(0.35f, 0.35f, 0.4f, 1);
+                    btnImage.color = GetColorFromConfig("UI_SecondaryColor", new Color(0.35f, 0.35f, 0.4f, 1));
                     break;
                 case ButtonType.Destructive:
-                    btnImage.color = new Color(0.75f, 0.2f, 0.2f, 1);
+                    btnImage.color = GetColorFromConfig("UI_DestructiveColor", new Color(0.75f, 0.2f, 0.2f, 1));
                     break;
             }
 
@@ -534,7 +551,7 @@ namespace BetterJoiner.Core.Features
             btnText.text = text;
             btnText.fontSize = 22;
             btnText.alignment = TextAlignmentOptions.Center;
-            btnText.color = Color.white;
+            btnText.color = GetColorFromConfig("UI_TextColor", Color.white);
             btnText.raycastTarget = false;
 
             ColorBlock colors = btn.colors;
@@ -542,6 +559,7 @@ namespace BetterJoiner.Core.Features
             colors.highlightedColor = btnImage.color * 1.15f;
             colors.pressedColor = btnImage.color * 0.9f;
             btn.colors = colors;
+            btnObj.AddComponent<ButtonHoverAnimation>();
 
             return btn;
         }
@@ -622,7 +640,7 @@ namespace BetterJoiner.Core.Features
                 emptyText.text = isSearching ? "Searching for rooms..." : "No rooms found";
                 emptyText.fontSize = 24;
                 emptyText.alignment = TextAlignmentOptions.Center;
-                emptyText.color = new Color(0.6f, 0.6f, 0.65f, 0.8f);
+                emptyText.color = GetColorFromConfig("UI_SubTextColor", new Color(0.6f, 0.6f, 0.65f, 0.8f));
 
                 displayCards.Add(emptyMsg);
             }
@@ -660,8 +678,12 @@ namespace BetterJoiner.Core.Features
                 cardLayout.preferredHeight = 60;
 
                 Image cardImage = card.AddComponent<Image>();
-                cardImage.color = new Color(0.25f, 0.35f, 0.25f, 1);
+                cardImage.color = GetColorFromConfig("UI_CardColor", new Color(0.25f, 0.35f, 0.25f, 1));
                 cardImage.raycastTarget = true;
+
+                Outline cardOutline = card.AddComponent<Outline>();
+                cardOutline.effectColor = new Color(1, 1, 1, 0.1f);
+                cardOutline.effectDistance = new Vector2(1, -1);
 
                 Button cardBtn = card.AddComponent<Button>();
                 cardBtn.onClick.AddListener(() => OnCreateNewSave());
@@ -680,7 +702,7 @@ namespace BetterJoiner.Core.Features
                 titleText.fontSize = 18;
                 titleText.fontStyle = FontStyles.Bold;
                 titleText.alignment = TextAlignmentOptions.Center;
-                titleText.color = Color.white;
+                titleText.color = GetColorFromConfig("UI_TextColor", Color.white);
                 titleText.raycastTarget = false;
 
                 ColorBlock colors = cardBtn.colors;
@@ -688,6 +710,7 @@ namespace BetterJoiner.Core.Features
                 colors.highlightedColor = new Color(0.35f, 0.45f, 0.35f, 1);
                 colors.pressedColor = new Color(0.2f, 0.3f, 0.2f, 1);
                 cardBtn.colors = colors;
+                card.AddComponent<ButtonHoverAnimation>();
 
                 displayCards.Add(card);
             }
@@ -710,71 +733,144 @@ namespace BetterJoiner.Core.Features
                 cardLayout.preferredHeight = 130;
 
                 Image cardImage = card.AddComponent<Image>();
-                cardImage.color = new Color(0.18f, 0.18f, 0.22f, 1);
+                cardImage.color = GetColorFromConfig("UI_CardColor", new Color(0.18f, 0.18f, 0.22f, 1));
                 cardImage.raycastTarget = true;
+
+                Outline cardOutline = card.AddComponent<Outline>();
+                cardOutline.effectColor = new Color(1, 1, 1, 0.05f);
+                cardOutline.effectDistance = new Vector2(1, -1);
 
                 Button cardBtn = card.AddComponent<Button>();
                 int slotId = save.SlotId;
                 cardBtn.onClick.AddListener(() => OnSaveSelected(slotId));
-
-                GameObject titleObj = new GameObject("Title");
-                titleObj.transform.SetParent(card.transform, false);
-                RectTransform titleRect = titleObj.AddComponent<RectTransform>();
-                titleRect.anchorMin = new Vector2(0, 1);
-                titleRect.anchorMax = new Vector2(1, 1);
-                titleRect.pivot = new Vector2(0.5f, 1);
-                titleRect.anchoredPosition = new Vector2(0, -12);
-                titleRect.sizeDelta = new Vector2(-20, 28);
-
-                TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
-                titleText.text = $"<b>Slot {save.SlotId}</b> - Cycle {save.SaveData.CycleCount}";
-                titleText.fontSize = 24;
-                titleText.alignment = TextAlignmentOptions.TopLeft;
-                titleText.color = Color.white;
-
-                GameObject dateObj = new GameObject("Date");
-                dateObj.transform.SetParent(card.transform, false);
-                RectTransform dateRect = dateObj.AddComponent<RectTransform>();
-                dateRect.anchorMin = new Vector2(0, 1);
-                dateRect.anchorMax = new Vector2(1, 1);
-                dateRect.pivot = new Vector2(0.5f, 1);
-                dateRect.anchoredPosition = new Vector2(0, -45);
-                dateRect.sizeDelta = new Vector2(-20, 22);
-
-                TextMeshProUGUI dateText = dateObj.AddComponent<TextMeshProUGUI>();
-                dateText.text = save.SaveData.RegDateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
-                dateText.fontSize = 18;
-                dateText.alignment = TextAlignmentOptions.TopLeft;
-                dateText.color = new Color(0.75f, 0.75f, 0.78f, 1);
-
-                GameObject playersObj = new GameObject("Players");
-                playersObj.transform.SetParent(card.transform, false);
-                RectTransform playersRect = playersObj.AddComponent<RectTransform>();
-                playersRect.anchorMin = new Vector2(0, 1);
-                playersRect.anchorMax = new Vector2(1, 1);
-                playersRect.pivot = new Vector2(0.5f, 1);
-                playersRect.anchoredPosition = new Vector2(0, -72);
-                playersRect.sizeDelta = new Vector2(-20, 22);
-
-                string playerNames = save.SaveData.PlayerNames != null && save.SaveData.PlayerNames.Count > 0 ? string.Join(", ", save.SaveData.PlayerNames.Take(3)) : "No players";
-
-                TextMeshProUGUI playersText = playersObj.AddComponent<TextMeshProUGUI>();
-                playersText.text = $"<i>Players: {playerNames}</i>";
-                playersText.fontSize = 16;
-                playersText.alignment = TextAlignmentOptions.TopLeft;
-                playersText.color = new Color(0.65f, 0.68f, 0.7f, 1);
 
                 ColorBlock colors = cardBtn.colors;
                 colors.normalColor = cardImage.color;
                 colors.highlightedColor = cardImage.color * 1.2f;
                 colors.pressedColor = cardImage.color * 0.85f;
                 cardBtn.colors = colors;
+                card.AddComponent<ButtonHoverAnimation>();
+
+                GameObject titleObj = new GameObject("Title");
+                titleObj.transform.SetParent(card.transform, false);
+                RectTransform titleRect = titleObj.AddComponent<RectTransform>();
+                titleRect.anchorMin = new Vector2(0, 1);
+                titleRect.anchorMax = new Vector2(0.7f, 1);
+                titleRect.pivot = new Vector2(0, 1);
+                titleRect.anchoredPosition = new Vector2(10, -10);
+                titleRect.sizeDelta = new Vector2(0, 30);
+
+                TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
+                string titleStr = $"<b>Slot {save.SlotId}</b> - Cycle {save.SaveData.CycleCount}";
+                if (save.SlotId == 0)
+                {
+                    titleStr = $"<b>Auto Save #{save.SlotId}</b> - Cycle {save.SaveData.CycleCount}";
+                }
+                titleText.text = titleStr;
+                titleText.fontSize = 24;
+                titleText.alignment = TextAlignmentOptions.TopLeft;
+                titleText.color = GetColorFromConfig("UI_TextColor", Color.white);
+
+                GameObject dateObj = new GameObject("Date");
+                dateObj.transform.SetParent(card.transform, false);
+                RectTransform dateRect = dateObj.AddComponent<RectTransform>();
+                dateRect.anchorMin = new Vector2(0, 1);
+                dateRect.anchorMax = new Vector2(0.7f, 1);
+                dateRect.pivot = new Vector2(0, 1);
+                dateRect.anchoredPosition = new Vector2(10, -45);
+                dateRect.sizeDelta = new Vector2(0, 22);
+
+                TextMeshProUGUI dateText = dateObj.AddComponent<TextMeshProUGUI>();
+                dateText.text = save.SaveData.RegDateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+                dateText.fontSize = 18;
+                dateText.alignment = TextAlignmentOptions.TopLeft;
+                dateText.color = GetColorFromConfig("UI_SubTextColor", new Color(0.75f, 0.75f, 0.78f, 1));
+
+                GameObject playersObj = new GameObject("Players");
+                playersObj.transform.SetParent(card.transform, false);
+                RectTransform playersRect = playersObj.AddComponent<RectTransform>();
+                playersRect.anchorMin = new Vector2(0, 1);
+                playersRect.anchorMax = new Vector2(0.7f, 1);
+                playersRect.pivot = new Vector2(0, 1);
+                playersRect.anchoredPosition = new Vector2(10, -72);
+                playersRect.sizeDelta = new Vector2(0, 22);
+
+                string playerNames = save.SaveData.PlayerNames != null && save.SaveData.PlayerNames.Count > 0 ? string.Join(", ", save.SaveData.PlayerNames.Take(3)) : "No players";
+                TextMeshProUGUI playersText = playersObj.AddComponent<TextMeshProUGUI>();
+                playersText.text = $"<i>Players: {playerNames}</i>";
+                playersText.fontSize = 16;
+                playersText.alignment = TextAlignmentOptions.TopLeft;
+                playersText.color = GetColorFromConfig("UI_SubTextColor", new Color(0.65f, 0.68f, 0.7f, 1));
+
+                GameObject currencyObj = new GameObject("Currency");
+                currencyObj.transform.SetParent(card.transform, false);
+                RectTransform currencyRect = currencyObj.AddComponent<RectTransform>();
+                currencyRect.anchorMin = new Vector2(0.7f, 1);
+                currencyRect.anchorMax = new Vector2(1, 1);
+                currencyRect.pivot = new Vector2(1, 1);
+                currencyRect.anchoredPosition = new Vector2(-10, -10);
+                currencyRect.sizeDelta = new Vector2(0, 30);
+
+                TextMeshProUGUI currencyText = currencyObj.AddComponent<TextMeshProUGUI>();
+                currencyText.text = $"${save.SaveData.Currency}";
+                currencyText.fontSize = 24;
+                currencyText.alignment = TextAlignmentOptions.TopRight;
+                currencyText.color = new Color(0.4f, 0.8f, 0.4f, 1);
+
+                GameObject statusObj = new GameObject("Status");
+                statusObj.transform.SetParent(card.transform, false);
+                RectTransform statusRect = statusObj.AddComponent<RectTransform>();
+                statusRect.anchorMin = new Vector2(0.7f, 1);
+                statusRect.anchorMax = new Vector2(1, 1);
+                statusRect.pivot = new Vector2(1, 1);
+                statusRect.anchoredPosition = new Vector2(-10, -45);
+                statusRect.sizeDelta = new Vector2(0, 22);
+
+                string statusStr = save.SaveData.TramRepaired ? "Repaired" : "Not Repaired";
+
+                TextMeshProUGUI statusText = statusObj.AddComponent<TextMeshProUGUI>();
+                statusText.text = statusStr;
+                statusText.fontSize = 16;
+                statusText.alignment = TextAlignmentOptions.TopRight;
+                statusText.color = GetColorFromConfig("UI_SubTextColor", new Color(0.75f, 0.75f, 0.78f, 1));
+
+                Button deleteBtn = CreateButton(card, "Delete", ButtonType.Destructive);
+                RectTransform deleteRect = deleteBtn.GetComponent<RectTransform>();
+                deleteRect.anchorMin = new Vector2(1, 0);
+                deleteRect.anchorMax = new Vector2(1, 0);
+                deleteRect.pivot = new Vector2(1, 0);
+                deleteRect.anchoredPosition = new Vector2(-10, 10);
+                deleteRect.sizeDelta = new Vector2(80, 30);
+                
+                TextMeshProUGUI deleteText = deleteBtn.GetComponentInChildren<TextMeshProUGUI>();
+                if(deleteText != null) deleteText.fontSize = 16;
+
+                deleteBtn.onClick.RemoveAllListeners();
+                deleteBtn.onClick.AddListener(() => DeleteSave(slotId));
 
                 displayCards.Add(card);
             }
             catch (Exception ex)
             {
                 MelonLogger.Error($"[GameManager] Error creating save card: {ex.Message}");
+            }
+        }
+
+        private void DeleteSave(int slotId)
+        {
+            try
+            {
+                string fileName = MMSaveGameData.GetSaveFileName(slotId);
+                if (MonoSingleton<PlatformMgr>.Instance.IsSaveFileExist(fileName))
+                {
+                    MonoSingleton<PlatformMgr>.Instance.Delete(fileName);
+                    MelonLogger.Msg($"[GameManager] Deleted save slot {slotId}");
+                    RefreshUI();
+                }
+            }
+            catch (Exception ex)
+            {
+                MelonLogger.Error($"Error deleting save: {ex.Message}");
             }
         }
 
@@ -789,7 +885,11 @@ namespace BetterJoiner.Core.Features
                 cardLayout.preferredHeight = 120;
 
                 Image cardImage = card.AddComponent<Image>();
-                cardImage.color = new Color(0.18f, 0.18f, 0.22f, 1);
+                cardImage.color = GetColorFromConfig("UI_CardColor", new Color(0.18f, 0.18f, 0.22f, 1));
+
+                Outline cardOutline = card.AddComponent<Outline>();
+                cardOutline.effectColor = new Color(1, 1, 1, 0.05f);
+                cardOutline.effectDistance = new Vector2(1, -1);
 
                 Button cardBtn = card.AddComponent<Button>();
                 cardBtn.onClick.AddListener(() => JoinRoom(room));
@@ -807,7 +907,7 @@ namespace BetterJoiner.Core.Features
                 titleText.text = $"<b>{room.DungeonName}</b> ({room.Status})";
                 titleText.fontSize = 22;
                 titleText.alignment = TextAlignmentOptions.TopLeft;
-                titleText.color = Color.white;
+                titleText.color = GetColorFromConfig("UI_TextColor", Color.white);
 
                 GameObject playersObj = new GameObject("Players");
                 playersObj.transform.SetParent(card.transform, false);
@@ -822,7 +922,7 @@ namespace BetterJoiner.Core.Features
                 playersText.text = $"Players: <color=#7FD8FF>{room.PlayerCount}</color>/{room.MaxPlayers}";
                 playersText.fontSize = 18;
                 playersText.alignment = TextAlignmentOptions.TopLeft;
-                playersText.color = new Color(0.75f, 0.75f, 0.78f, 1);
+                playersText.color = GetColorFromConfig("UI_SubTextColor", new Color(0.75f, 0.75f, 0.78f, 1));
 
                 GameObject idObj = new GameObject("RoomID");
                 idObj.transform.SetParent(card.transform, false);
@@ -837,13 +937,14 @@ namespace BetterJoiner.Core.Features
                 idText.text = $"<size=14>ID: {room.RoomId.Substring(0, Mathf.Min(8, room.RoomId.Length))}</size>";
                 idText.fontSize = 16;
                 idText.alignment = TextAlignmentOptions.TopLeft;
-                idText.color = new Color(0.65f, 0.68f, 0.7f, 1);
+                idText.color = GetColorFromConfig("UI_SubTextColor", new Color(0.65f, 0.68f, 0.7f, 1));
 
                 ColorBlock colors = cardBtn.colors;
                 colors.normalColor = cardImage.color;
                 colors.highlightedColor = cardImage.color * 1.2f;
                 colors.pressedColor = cardImage.color * 0.85f;
                 cardBtn.colors = colors;
+                card.AddComponent<ButtonHoverAnimation>();
 
                 displayCards.Add(card);
 
@@ -1009,6 +1110,15 @@ namespace BetterJoiner.Core.Features
 
         public void Update()
         {
+            if (mainPanel != null && mainPanel.activeSelf)
+            {
+                CanvasGroup cg = mainPanel.GetComponent<CanvasGroup>();
+                if (cg != null && cg.alpha < 1)
+                {
+                    cg.alpha = Mathf.MoveTowards(cg.alpha, 1, Time.unscaledDeltaTime * 5f);
+                }
+            }
+
             if (currentTab == 1 && Time.time - lastRefreshTime > RefreshInterval && !isSearching)
             {
                 SearchForRooms();
@@ -1243,6 +1353,10 @@ namespace BetterJoiner.Core.Features
 
                 LoadAllSaves();
                 mainPanel.SetActive(true);
+                
+                CanvasGroup cg = mainPanel.GetComponent<CanvasGroup>();
+                if (cg != null) cg.alpha = 0f;
+
                 RefreshDisplay();
 
                 MelonLogger.Msg("[GameManager] RefreshUI completed - UI shown");
@@ -1267,6 +1381,18 @@ namespace BetterJoiner.Core.Features
             {
                 MelonLogger.Warning($"[GameManager] Cleanup error: {ex.Message}");
             }
+        }
+
+        private Color GetColorFromConfig(string key, Color defaultColor)
+        {
+            if (Config == null) return defaultColor;
+            
+            string hex = Config.GetValue(key, "#" + ColorUtility.ToHtmlStringRGBA(defaultColor));
+            if (ColorUtility.TryParseHtmlString(hex, out var color))
+            {
+                return color;
+            }
+            return defaultColor;
         }
 
         public class SaveSlotData
@@ -1294,5 +1420,51 @@ namespace BetterJoiner.Core.Features
         Primary,
         Secondary,
         Destructive,
+    }
+
+    public static class ColorExtensions
+    {
+        public static Color ToColor(this string color)
+        {
+            if (ColorUtility.TryParseHtmlString(color, out var c))
+                return c;
+            return Color.white;
+        }
+    }
+
+    public class ButtonHoverAnimation : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    {
+        private Vector3 originalScale;
+        private bool isHovered = false;
+        private const float HOVER_SCALE = 1.05f;
+        private const float ANIMATION_SPEED = 10f;
+
+        private void Start()
+        {
+            originalScale = transform.localScale;
+        }
+
+        private void OnEnable()
+        {
+            originalScale = Vector3.one;
+            transform.localScale = Vector3.one;
+            isHovered = false;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            isHovered = true;
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            isHovered = false;
+        }
+
+        private void Update()
+        {
+            Vector3 targetScale = isHovered ? originalScale * HOVER_SCALE : originalScale;
+            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.unscaledDeltaTime * ANIMATION_SPEED);
+        }
     }
 }

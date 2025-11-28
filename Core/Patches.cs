@@ -12,57 +12,26 @@ namespace BetterJoiner.Core
 {
     public static class Patches
     {
-        public static bool enhancedSaveUI = true;
+        public static bool Enabled = true;
 
-        private static ConfigManager configManager;
+        public static ConfigManager Config;
 
         public static void ApplyPatches(ConfigManager config)
         {
             try
             {
-                configManager = config;
-                LoadConfig();
+                Config = config;
+                Enabled = Config.GetValue("Enabled", true);
 
                 HarmonyLib.Harmony harmony = new HarmonyLib.Harmony("com.Mimesis.BetterJoiner");
                 harmony.PatchAll(typeof(Patches).Assembly);
 
                 MelonLogger.Msg("Harmony patches applied successfully");
-                SaveConfig();
+                Config.SetValue("Enabled", Enabled);
             }
             catch (Exception ex)
             {
                 MelonLogger.Error($"Error applying patches: {ex.Message}");
-            }
-        }
-
-        private static void LoadConfig()
-        {
-            if (configManager == null)
-                return;
-
-            try
-            {
-                enhancedSaveUI = configManager.GetBool("enhancedSaveUI", true);
-            }
-            catch (Exception ex)
-            {
-                MelonLogger.Error($"Error loading patch config: {ex.Message}");
-            }
-        }
-
-        public static void SaveConfig()
-        {
-            if (configManager == null)
-                return;
-
-            try
-            {
-                configManager.SetBool("enhancedSaveUI", enhancedSaveUI);
-                MelonPreferences.Save();
-            }
-            catch (Exception ex)
-            {
-                MelonLogger.Error($"Error saving patch config: {ex.Message}");
             }
         }
     }
@@ -111,7 +80,7 @@ namespace BetterJoiner.Core
     {
         private static void Postfix(UIPrefab_LoadTram __instance)
         {
-            if (!Patches.enhancedSaveUI)
+            if (!Patches.Enabled)
                 return;
 
             try
@@ -120,6 +89,7 @@ namespace BetterJoiner.Core
                 if (manager == null)
                 {
                     manager = __instance.gameObject.AddComponent<GameManager>();
+                    manager.Config = Patches.Config;
                     manager.InitializeLoadUI(__instance);
                 }
                 else
@@ -139,7 +109,7 @@ namespace BetterJoiner.Core
     {
         private static void Postfix(UIPrefab_NewTram __instance)
         {
-            if (!Patches.enhancedSaveUI)
+            if (!Patches.Enabled)
                 return;
 
             try
@@ -148,6 +118,7 @@ namespace BetterJoiner.Core
                 if (manager == null)
                 {
                     manager = __instance.gameObject.AddComponent<GameManager>();
+                    manager.Config = Patches.Config;
                     manager.InitializeNewTramUI(__instance);
                 }
                 else
@@ -167,7 +138,7 @@ namespace BetterJoiner.Core
     {
         private static void Postfix(UIPrefab_NewTramPopUp __instance)
         {
-            if (!Patches.enhancedSaveUI)
+            if (!Patches.Enabled)
                 return;
 
             try
@@ -211,7 +182,7 @@ namespace BetterJoiner.Core
     {
         private static void Postfix(UIPrefab_MainMenu __instance)
         {
-            if (!Patches.enhancedSaveUI)
+            if (!Patches.Enabled)
                 return;
 
             try
@@ -267,7 +238,7 @@ namespace BetterJoiner.Core
 
         private static void Postfix(MainMenu __instance)
         {
-            if (!Patches.enhancedSaveUI)
+            if (!Patches.Enabled)
                 return;
 
             try
@@ -313,6 +284,7 @@ namespace BetterJoiner.Core
                         if (manager == null)
                         {
                             manager = loadtram.gameObject.AddComponent<GameManager>();
+                            manager.Config = Patches.Config;
                             manager.InitializeLoadUI(loadtram);
                         }
                         else
@@ -350,6 +322,7 @@ namespace BetterJoiner.Core
                         if (manager == null)
                         {
                             manager = newtram.gameObject.AddComponent<GameManager>();
+                            manager.Config = Patches.Config;
                             manager.InitializeNewTramUI(newtram);
                         }
                         else

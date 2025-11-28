@@ -2,7 +2,7 @@ using BetterJoiner.Core;
 using MelonLoader;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(Loader), "BetterJoiner", "1.1.0", "notfishvr")]
+[assembly: MelonInfo(typeof(Loader), "BetterJoiner", "1.2.0", "notfishvr")]
 [assembly: MelonGame("ReLUGames", "MIMESIS")]
 
 namespace BetterJoiner.Core
